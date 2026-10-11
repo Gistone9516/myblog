@@ -21,18 +21,18 @@ export default defineConfig({
 			styleOverrides: {
 				borderRadius: '10px',
 				// tokens.css의 --surface와 같은 값. 코드 블록만 다른 종이처럼 뜨지 않게 한다
-				codeBackground: ['#1a2123', '#fbfdfb'],
-				borderColor: ['#2a3436', '#dfe7e2'],
+				codeBackground: ['#202124', '#ffffff'],
+				borderColor: ['#2f3237', '#e9ecef'],
 				codeFontFamily:
 					"'JetBrains Mono', 'Cascadia Code', Consolas, 'D2Coding', 'Noto Sans Mono CJK KR', monospace",
 				uiFontFamily: "'Pretendard Variable', Pretendard, system-ui, sans-serif",
 				// 그림자 없이 선으로만 구분한다 (설계서 5장)
 				frames: {
 					frameBoxShadowCssValue: 'none',
-					editorActiveTabIndicatorTopColor: ['#7db3ae', '#2e6a6e'],
+					editorActiveTabIndicatorTopColor: ['#e9ecef', '#212529'],
 				},
-				// 강조 줄은 사이트 강조색을 쓴다 (tokens.css의 --accent-bg, --accent)
-				textMarkers: { markBackground: ['#213735', '#dceae6'], markBorderColor: ['#7db3ae', '#2e6a6e'] },
+				// 강조 줄은 사이트의 회색 칩 색을 쓴다 (tokens.css의 --accent-bg, --muted)
+				textMarkers: { markBackground: ['#2b2d31', '#f1f3f5'], markBorderColor: ['#a0a6ad', '#6c757d'] },
 			},
 		}),
 		mdx(),

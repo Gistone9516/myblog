@@ -14,7 +14,3 @@ export const SITE = {
 		email: '',
 	},
 };
-
-export const hasProfile = Boolean(
-	SITE.profile.name || SITE.profile.oneLiner || SITE.profile.intro || SITE.profile.focus.length,
-);

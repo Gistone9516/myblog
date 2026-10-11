@@ -1,5 +1,6 @@
 ---
-// 노트 목록. 정렬은 하지 않는다. 받은 순서 그대로 그린다 (정렬은 도메인의 일)
+// 노트 목록. hudi.blog처럼 큰 제목, 날짜, 요약, 회색 칩 순서로 그린다
+// 정렬은 하지 않고 받은 순서 그대로 그린다 (정렬은 도메인의 일)
 import type { Note } from '../lib/notes';
 import { slugify } from '../lib/notes';
 import { formatDate } from '../utils/format';
@@ -20,23 +21,19 @@ const { notes, compact = false } = Astro.props;
 		<ul class:list={['notes', { compact }]}>
 			{notes.map((note) => (
 				<li>
-					<div class="head">
-						<a class="title" href={withBase(`/notes/${note.id}/`)}>
-							{note.data.pinned && <span class="pin">고정</span>}
-							{note.data.title}
-						</a>
-						<time class="date num" datetime={note.data.date.toISOString()}>
-							{formatDate(note.data.date)}
-						</time>
-					</div>
+					<a class="title" href={withBase(`/notes/${note.id}/`)}>
+						{note.data.pinned && <span class="pin">고정</span>}
+						{note.data.title}
+					</a>
+					<time class="date num" datetime={note.data.date.toISOString()}>
+						{formatDate(note.data.date)}
+					</time>
 					{!compact && <p class="desc">{note.data.description}</p>}
 					{!compact && (
-						<p class="meta">
+						<p class="chips">
 							<a href={withBase(`/categories/${slugify(note.data.category)}/`)}>{note.data.category}</a>
 							{note.data.tags.map((tag) => (
-								<a class="tag" href={withBase(`/tags/${slugify(tag)}/`)}>
-									#{tag}
-								</a>
+								<a href={withBase(`/tags/${slugify(tag)}/`)}>{tag}</a>
 							))}
 						</p>
 					)}
@@ -54,41 +51,39 @@ const { notes, compact = false } = Astro.props;
 	}
 
 	.notes > li {
-		padding-block: 20px;
-		border-top: 1px solid var(--line);
-	}
-
-	.notes > li:first-child {
-		border-top: 0;
-		padding-top: 4px;
+		display: flex;
+		flex-direction: column;
+		padding-block: 40px;
+		border-bottom: 1px solid var(--line);
 	}
 
 	.compact > li {
-		padding-block: 10px;
-	}
-
-	.head {
-		display: flex;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
 		align-items: baseline;
-		justify-content: space-between;
 		gap: 16px;
+		padding-block: 12px;
+		border-bottom: 0;
 	}
 
 	.title {
-		font-size: var(--fs-h3);
-		font-weight: 600;
+		font-size: var(--fs-h1);
+		font-weight: 700;
+		line-height: 1.35;
+		letter-spacing: -0.02em;
 		color: var(--text);
 		text-decoration: none;
-		line-height: 1.45;
 	}
 
 	.compact .title {
 		font-size: var(--fs-body);
 		font-weight: 500;
+		letter-spacing: 0;
 	}
 
 	.title:hover {
-		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 4px;
 	}
 
 	.pin {
@@ -97,47 +92,53 @@ const { notes, compact = false } = Astro.props;
 		padding: 0 8px;
 		border-radius: var(--r-chip);
 		background: var(--accent-bg);
-		color: var(--accent);
 		font-size: var(--fs-meta);
 		font-weight: 600;
-		vertical-align: 3px;
+		letter-spacing: 0;
+		vertical-align: 5px;
 	}
 
 	.date {
-		flex: none;
+		margin-top: 12px;
 		color: var(--muted);
+		font-size: var(--fs-sm);
+	}
+
+	.compact .date {
+		flex: none;
+		margin-top: 0;
 		font-size: var(--fs-meta);
 	}
 
 	.desc {
-		margin: 6px 0 0;
+		margin: 16px 0 0;
 		color: var(--muted);
 		font-size: var(--fs-sm);
-		line-height: 1.7;
+		line-height: 1.8;
 	}
 
-	.meta {
+	.chips {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 4px 12px;
-		margin: 10px 0 0;
-		font-size: var(--fs-meta);
+		gap: 8px;
+		margin: 20px 0 0;
 	}
 
-	.meta a {
-		color: var(--accent);
+	.chips a {
+		padding: 5px 13px;
+		border-radius: var(--r-chip);
+		background: var(--accent-bg);
+		color: var(--text);
+		font-size: var(--fs-meta);
 		text-decoration: none;
 	}
 
-	.meta a.tag {
-		color: var(--muted);
-	}
-
-	.meta a:hover {
-		text-decoration: underline;
+	.chips a:hover {
+		background: var(--line);
 	}
 
 	.empty {
+		margin-top: 40px;
 		color: var(--muted);
 	}
 </style>

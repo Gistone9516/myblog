@@ -1,14 +1,16 @@
-/* 디자인 토큰의 유일한 위치 (설계서 5장). 화면 코드는 여기 값만 쓴다 */
+/* 디자인 토큰의 유일한 위치 (설계서 5장). 화면 코드는 여기 값만 쓴다
+   기준 디자인은 hudi.blog: 흰 바탕, 무채색, 회색 칩 (사용자 2026-10-11) */
 :root {
-	--bg: #f2f6f3;
-	--surface: #fbfdfb;
-	--text: #22282a;
-	--muted: #5c696b;
-	--accent: #2e6a6e;
-	--accent-bg: #dceae6;
-	--line: #dfe7e2;
+	--bg: #ffffff;
+	--surface: #ffffff;
+	--text: #212529;
+	--muted: #6c757d;
+	--accent: #212529;
+	--accent-bg: #f1f3f5;
+	--line: #e9ecef;
+	--header-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
 
-	/* 연재 색 (B-16). 글자색이 아니라 면 색으로만 쓴다 */
+	/* 연재 색 (B-16). 연재 표시의 작은 마크와 연재 페이지에만 쓴다 */
 	--s1: #5a7da8;
 	--s2: #8c6d93;
 	--s3: #6f8b52;
@@ -16,23 +18,23 @@
 	--s5: #a56b72;
 
 	--r-chip: 999px;
-	--r-card: 14px;
-	--r-box: 12px;
-	--r-code: 10px;
-	--r-inline: 6px;
+	--r-card: 12px;
+	--r-box: 10px;
+	--r-code: 8px;
+	--r-inline: 4px;
 
 	--fs-meta: 13px;
-	--fs-sm: 14.5px;
+	--fs-sm: 15px;
 	--fs-body: 17px;
 	--fs-h3: 20px;
 	--fs-h2: 24px;
-	--fs-h1: 30px;
-	--fs-title: 36px;
+	--fs-h1: 28px;
+	--fs-title: 40px;
 	--lh-body: 1.75;
 
 	--measure: 41rem;
-	--home-w: 760px;
-	--spine: 12px;
+	--home-w: 680px;
+	--spine: 4px;
 	--gutter: 16px;
 
 	--font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
@@ -45,13 +47,14 @@
 }
 
 :root[data-theme='dark'] {
-	--bg: #121819;
-	--surface: #1a2123;
-	--text: #e3e9e6;
-	--muted: #9aa8a8;
-	--accent: #7db3ae;
-	--accent-bg: #213735;
-	--line: #2a3436;
+	--bg: #18191b;
+	--surface: #202124;
+	--text: #e9ecef;
+	--muted: #a0a6ad;
+	--accent: #f1f3f5;
+	--accent-bg: #2b2d31;
+	--line: #2f3237;
+	--header-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
 
 	--s1: #86a8d0;
 	--s2: #b398ba;

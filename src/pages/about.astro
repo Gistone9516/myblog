@@ -1,56 +1,70 @@
 ---
-import PageHeading from '../components/PageHeading.astro';
+// 소개: 대표 화면과 같은 프로필과 탭 아래에 소개 문단과 지표를 둔다
+import ProfileTabs from '../components/ProfileTabs.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, hasProfile } from '../site.config';
+import { loadNotes } from '../lib/content';
+import { siteStats } from '../lib/notes';
+import { SITE } from '../site.config';
+import { withBase } from '../utils/withBase';
 
-const { profile } = SITE;
+const notes = await loadNotes();
+const stats = siteStats(notes);
+const { intro } = SITE.profile;
 ---
 
 <BaseLayout title="소개">
 	<div class="container">
-		<PageHeading title={profile.name || '소개'} lead={profile.oneLiner || undefined} />
-		{
-			hasProfile ? (
-				<div class="about">
-					{profile.intro && <p>{profile.intro}</p>}
-					{profile.focus.length > 0 && (
-						<p class="focus">
-							<span>지금 공부 중</span>
-							{profile.focus.map((item) => (
-								<span class="badge">{item}</span>
-							))}
-						</p>
-					)}
-				</div>
-			) : (
-				<p class="empty">아직 소개를 작성하지 않았습니다.</p>
-			)
-		}
+		<ProfileTabs active="about" noteCount={notes.length} />
+		<div class="about">
+			<!-- B-7 소개 문단이 비어 있으면 비어 있다고만 적는다 -->
+			{intro ? <p>{intro}</p> : <p class="empty">아직 소개를 작성하지 않았습니다.</p>}
+			<!-- B-6 지표는 저장하지 않고 매번 계산한다 -->
+			<p class="stats">
+				노트 <strong class="num">{stats.notes}</strong>편, 연재 <strong class="num">{stats.series}</strong>개,{' '}
+				<strong class="num">{stats.days}</strong>일 기록
+			</p>
+			<p class="links">
+				<a href={withBase('/archive/')}>아카이브</a>
+				<a href={withBase('/categories/')}>분류</a>
+				<a href={withBase('/tags/')}>태그</a>
+				<a href={withBase('/series/')}>연재</a>
+			</p>
+		</div>
 	</div>
 </BaseLayout>
 
 <style>
+	.about {
+		margin-top: 40px;
+	}
+
 	.about p {
-		margin: 0 0 1em;
+		margin: 0 0 16px;
 		max-width: var(--measure);
 	}
 
-	.focus {
+	.empty,
+	.stats {
+		color: var(--muted);
+		font-size: var(--fs-sm);
+	}
+
+	.stats strong {
+		color: var(--text);
+	}
+
+	.links {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px;
+		gap: 16px;
 		font-size: var(--fs-sm);
+	}
+
+	.links a {
 		color: var(--muted);
 	}
 
-	.badge {
-		padding: 2px 10px;
-		border-radius: var(--r-chip);
-		background: var(--accent-bg);
-		color: var(--accent);
-	}
-
-	.empty {
-		color: var(--muted);
+	.links a:hover {
+		color: var(--text);
 	}
 </style>

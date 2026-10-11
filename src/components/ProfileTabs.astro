@@ -1,0 +1,120 @@
+---
+// 대표 화면과 소개 페이지 위쪽의 프로필과 탭. hudi.blog의 프로필, 글, 소개 탭 구성을 따른다
+// B-7 프로필이 비어 있으면 사이트 이름과 사이트 소개를 쓰고, 빈 항목은 그리지 않는다
+import { SITE } from '../site.config';
+import { withBase } from '../utils/withBase';
+
+interface Props {
+	active: 'notes' | 'about';
+	noteCount: number;
+}
+
+const { active, noteCount } = Astro.props;
+const { profile, socials } = SITE;
+const socialLinks = [
+	socials.github && { href: socials.github, label: 'GitHub' },
+	socials.email && { href: `mailto:${socials.email}`, label: '이메일' },
+].filter((link): link is { href: string; label: string } => Boolean(link));
+---
+
+<section class="profile">
+	<p class="name">{profile.name ? `@${profile.name}` : SITE.title}</p>
+	<p class="line">{profile.oneLiner || SITE.description}</p>
+	{
+		profile.focus.length > 0 && (
+			<p class="focus">
+				{profile.focus.map((item) => (
+					<span>{item}</span>
+				))}
+			</p>
+		)
+	}
+	{
+		socialLinks.length > 0 && (
+			<p class="socials">
+				{socialLinks.map((link) => (
+					<a href={link.href}>{link.label}</a>
+				))}
+			</p>
+		)
+	}
+</section>
+
+<nav class="tabs" aria-label="보기">
+	<a href={withBase('/')} aria-current={active === 'notes' ? 'page' : undefined}>
+		글 <span class="badge num">{noteCount}</span>
+	</a>
+	<a href={withBase('/about/')} aria-current={active === 'about' ? 'page' : undefined}>소개</a>
+</nav>
+
+<style>
+	.profile {
+		margin: 64px 0 40px;
+	}
+
+	.name {
+		margin: 0;
+		font-size: var(--fs-h1);
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+
+	.line {
+		margin: 6px 0 0;
+		color: var(--muted);
+		font-size: var(--fs-sm);
+	}
+
+	.focus,
+	.socials {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 14px 0 0;
+		font-size: var(--fs-meta);
+	}
+
+	.focus span {
+		padding: 2px 10px;
+		border-radius: var(--r-chip);
+		background: var(--accent-bg);
+	}
+
+	.socials a {
+		color: var(--muted);
+	}
+
+	.tabs {
+		display: flex;
+		justify-content: center;
+		gap: 28px;
+		border-bottom: 1px solid var(--line);
+		margin-bottom: 8px;
+	}
+
+	.tabs a {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 10px 14px;
+		margin-bottom: -1px;
+		border-bottom: 2px solid transparent;
+		color: var(--muted);
+		font-size: var(--fs-sm);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.tabs a[aria-current='page'] {
+		color: var(--text);
+		border-bottom-color: var(--text);
+	}
+
+	.badge {
+		padding: 0 7px;
+		border-radius: var(--r-chip);
+		background: var(--accent-bg);
+		font-size: var(--fs-meta);
+		font-weight: 500;
+	}
+</style>
