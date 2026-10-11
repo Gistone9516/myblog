@@ -1,0 +1,46 @@
+---
+// 검색 (B-10). Pagefind 색인은 빌드 뒤에 생기므로 개발 서버에서는 안내 문구만 보인다
+import PageHeading from '../components/PageHeading.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/withBase';
+
+const pagefindBase = withBase('/pagefind/');
+---
+
+<BaseLayout title="검색">
+	<div class="container">
+		<PageHeading title="검색" />
+		<div id="search" data-pagefind-base={pagefindBase} data-site-base={withBase('/')}></div>
+		<noscript>검색은 자바스크립트가 켜져 있어야 동작합니다.</noscript>
+	</div>
+	<link rel="stylesheet" href={`${pagefindBase}pagefind-ui.css`} />
+	<script is:inline src={`${pagefindBase}pagefind-ui.js`}></script>
+	<script is:inline>
+		window.addEventListener('DOMContentLoaded', function () {
+			var el = document.getElementById('search');
+			if (!window.PagefindUI) {
+				el.textContent = '검색 색인이 아직 없습니다. 빌드한 사이트에서 검색할 수 있습니다.';
+				return;
+			}
+			new window.PagefindUI({
+				element: '#search',
+				baseUrl: el.dataset.siteBase,
+				showSubResults: true,
+				showImages: false,
+			});
+		});
+	</script>
+</BaseLayout>
+
+<style>
+	#search {
+		--pagefind-ui-primary: var(--accent);
+		--pagefind-ui-text: var(--text);
+		--pagefind-ui-background: var(--surface);
+		--pagefind-ui-border: var(--line);
+		--pagefind-ui-tag: var(--accent-bg);
+		--pagefind-ui-border-width: 1px;
+		--pagefind-ui-border-radius: 12px;
+		--pagefind-ui-font: var(--font-sans);
+	}
+</style>

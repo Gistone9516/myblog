@@ -1,0 +1,16 @@
+---
+import ChipList from '../../components/ChipList.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadNotes } from '../../lib/content';
+import { groupByCategory } from '../../lib/notes';
+
+const categories = groupByCategory(await loadNotes());
+---
+
+<BaseLayout title="분류">
+	<div class="container">
+		<PageHeading title="분류" lead={`분류 ${categories.length}개`} />
+		<ChipList items={categories} kind="categories" />
+	</div>
+</BaseLayout>

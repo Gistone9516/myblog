@@ -1,0 +1,32 @@
+---
+// 목록 페이지의 제목과 한 줄 설명
+interface Props {
+	title: string;
+	lead?: string;
+}
+
+const { title, lead } = Astro.props;
+---
+
+<header class="page-heading">
+	<h1>{title}</h1>
+	{lead && <p>{lead}</p>}
+	<slot />
+</header>
+
+<style>
+	.page-heading {
+		margin: 56px 0 32px;
+	}
+
+	h1 {
+		margin: 0;
+		font-size: var(--fs-h1);
+	}
+
+	p {
+		margin: 8px 0 0;
+		color: var(--muted);
+		font-size: var(--fs-sm);
+	}
+</style>

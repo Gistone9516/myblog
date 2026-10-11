@@ -1,0 +1,63 @@
+/* 디자인 토큰의 유일한 위치 (설계서 5장). 화면 코드는 여기 값만 쓴다 */
+:root {
+	--bg: #f2f6f3;
+	--surface: #fbfdfb;
+	--text: #22282a;
+	--muted: #5c696b;
+	--accent: #2e6a6e;
+	--accent-bg: #dceae6;
+	--line: #dfe7e2;
+
+	/* 연재 색 (B-16). 글자색이 아니라 면 색으로만 쓴다 */
+	--s1: #5a7da8;
+	--s2: #8c6d93;
+	--s3: #6f8b52;
+	--s4: #a98a45;
+	--s5: #a56b72;
+
+	--r-chip: 999px;
+	--r-card: 14px;
+	--r-box: 12px;
+	--r-code: 10px;
+	--r-inline: 6px;
+
+	--fs-meta: 13px;
+	--fs-sm: 14.5px;
+	--fs-body: 17px;
+	--fs-h3: 20px;
+	--fs-h2: 24px;
+	--fs-h1: 30px;
+	--fs-title: 36px;
+	--lh-body: 1.75;
+
+	--measure: 41rem;
+	--home-w: 760px;
+	--spine: 12px;
+	--gutter: 16px;
+
+	--font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+		'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+	/* 코드 속 한글 주석의 폭이 어긋나지 않도록 한글 고정폭 글꼴을 뒤에 둔다 (B-15) */
+	--font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, 'D2Coding', 'Noto Sans Mono CJK KR',
+		monospace;
+
+	color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+	--bg: #121819;
+	--surface: #1a2123;
+	--text: #e3e9e6;
+	--muted: #9aa8a8;
+	--accent: #7db3ae;
+	--accent-bg: #213735;
+	--line: #2a3436;
+
+	--s1: #86a8d0;
+	--s2: #b398ba;
+	--s3: #9cb87f;
+	--s4: #cdb06d;
+	--s5: #cf9aa0;
+
+	color-scheme: dark;
+}

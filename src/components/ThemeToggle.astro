@@ -1,0 +1,93 @@
+---
+// B-13 테마는 시스템, 밝게, 어둡게 세 상태를 차례로 돈다
+---
+
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="테마 바꾸기">
+	<svg data-icon="system" viewBox="0 0 24 24" aria-hidden="true">
+		<rect x="3" y="4" width="18" height="12" rx="2"></rect>
+		<path d="M8 20h8M12 16v4"></path>
+	</svg>
+	<svg data-icon="light" viewBox="0 0 24 24" aria-hidden="true">
+		<circle cx="12" cy="12" r="4"></circle>
+		<path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+	</svg>
+	<svg data-icon="dark" viewBox="0 0 24 24" aria-hidden="true">
+		<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path>
+	</svg>
+</button>
+
+<script>
+	type Pref = 'system' | 'light' | 'dark';
+	const ORDER: Pref[] = ['system', 'light', 'dark'];
+	const LABEL: Record<Pref, string> = { system: '시스템 설정', light: '밝게', dark: '어둡게' };
+
+	const root = document.documentElement;
+	const media = window.matchMedia('(prefers-color-scheme: dark)');
+	let pref = (root.dataset.themePref as Pref) || 'system';
+
+	function apply(next: Pref) {
+		const dark = next === 'dark' || (next === 'system' && media.matches);
+		root.dataset.theme = dark ? 'dark' : 'light';
+		root.dataset.themePref = next;
+		const label = `테마: ${LABEL[next]}. 누르면 다음 테마로 바뀝니다`;
+		document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+			button.setAttribute('aria-label', label);
+			button.setAttribute('title', `테마: ${LABEL[next]}`);
+		});
+	}
+
+	apply(pref);
+
+	document.querySelectorAll('[data-theme-toggle]').forEach((button) =>
+		button.addEventListener('click', () => {
+			pref = ORDER[(ORDER.indexOf(pref) + 1) % ORDER.length];
+			try {
+				localStorage.setItem('theme', pref);
+			} catch {
+				// 저장을 막은 브라우저에서는 이번 방문 동안만 유지한다
+			}
+			apply(pref);
+		}),
+	);
+
+	media.addEventListener('change', () => {
+		if (pref === 'system') apply(pref);
+	});
+</script>
+
+<style>
+	.theme-toggle {
+		display: inline-grid;
+		place-items: center;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		border: 0;
+		border-radius: var(--r-chip);
+		background: transparent;
+		color: var(--muted);
+		cursor: pointer;
+	}
+
+	.theme-toggle:hover {
+		color: var(--text);
+		background: var(--accent-bg);
+	}
+
+	svg {
+		display: none;
+		width: 19px;
+		height: 19px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.7;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	:global([data-theme-pref='system']) svg[data-icon='system'],
+	:global([data-theme-pref='light']) svg[data-icon='light'],
+	:global([data-theme-pref='dark']) svg[data-icon='dark'] {
+		display: block;
+	}
+</style>

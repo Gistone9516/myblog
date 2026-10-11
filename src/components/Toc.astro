@@ -1,0 +1,137 @@
+---
+// 노트 목차 (B-14). 넓은 화면은 옆에 붙고, 좁은 화면은 본문 위에 접혀 있다
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+	variant: 'side' | 'inline';
+}
+
+const { headings, variant } = Astro.props;
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+	items.length > 0 &&
+		(variant === 'inline' ? (
+			<details class="toc-inline" data-pagefind-ignore>
+				<summary>목차</summary>
+				<ol>
+					{items.map((h) => (
+						<li class={`d${h.depth}`}>
+							<a href={`#${h.slug}`}>{h.text}</a>
+						</li>
+					))}
+				</ol>
+			</details>
+		) : (
+			<nav class="toc-side" aria-label="목차" data-toc>
+				<p class="label">목차</p>
+				<ol>
+					{items.map((h) => (
+						<li class={`d${h.depth}`}>
+							<a href={`#${h.slug}`} data-toc-link={h.slug}>
+								{h.text}
+							</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+		))
+}
+
+<script>
+	// 화면에 보이는 마지막 제목을 현재 항목으로 표시한다
+	const toc = document.querySelector('[data-toc]');
+	if (toc) {
+		const links = new Map<string, Element>();
+		toc.querySelectorAll('[data-toc-link]').forEach((a) => links.set(a.getAttribute('data-toc-link')!, a));
+		const headings = [...links.keys()]
+			.map((id) => document.getElementById(id))
+			.filter((el): el is HTMLElement => Boolean(el));
+
+		const update = () => {
+			let current: HTMLElement | undefined;
+			for (const h of headings) {
+				if (h.getBoundingClientRect().top <= 96) current = h;
+			}
+			links.forEach((a, id) => a.toggleAttribute('aria-current', id === current?.id));
+		};
+		document.addEventListener('scroll', update, { passive: true });
+		update();
+	}
+</script>
+
+<style>
+	ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.toc-side {
+		position: sticky;
+		top: 24px;
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
+	.label {
+		margin: 0 0 8px;
+		font-size: var(--fs-meta);
+		font-weight: 600;
+		color: var(--muted);
+	}
+
+	.toc-side li a {
+		display: block;
+		padding: 4px 0 4px 12px;
+		border-left: 2px solid var(--line);
+		color: var(--muted);
+		text-decoration: none;
+	}
+
+	.toc-side li.d3 a {
+		padding-left: 24px;
+	}
+
+	.toc-side li a:hover {
+		color: var(--text);
+	}
+
+	.toc-side li a[aria-current] {
+		border-left-color: var(--accent);
+		color: var(--text);
+	}
+
+	.toc-inline {
+		margin-bottom: 24px;
+		padding: 12px 16px;
+		border: 1px solid var(--line);
+		border-radius: var(--r-box);
+		background: var(--surface);
+		font-size: var(--fs-sm);
+	}
+
+	.toc-inline summary {
+		cursor: pointer;
+		font-weight: 600;
+	}
+
+	.toc-inline ol {
+		margin-top: 8px;
+	}
+
+	.toc-inline li.d3 {
+		padding-left: 16px;
+	}
+
+	.toc-inline a {
+		color: var(--muted);
+		text-decoration: none;
+	}
+
+	.toc-inline a:hover {
+		color: var(--accent);
+	}
+</style>

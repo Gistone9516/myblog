@@ -1,0 +1,143 @@
+---
+// 노트 목록. 정렬은 하지 않는다. 받은 순서 그대로 그린다 (정렬은 도메인의 일)
+import type { Note } from '../lib/notes';
+import { slugify } from '../lib/notes';
+import { formatDate } from '../utils/format';
+import { withBase } from '../utils/withBase';
+
+interface Props {
+	notes: Note[];
+	compact?: boolean;
+}
+
+const { notes, compact = false } = Astro.props;
+---
+
+{
+	notes.length === 0 ? (
+		<p class="empty">아직 노트가 없습니다.</p>
+	) : (
+		<ul class:list={['notes', { compact }]}>
+			{notes.map((note) => (
+				<li>
+					<div class="head">
+						<a class="title" href={withBase(`/notes/${note.id}/`)}>
+							{note.data.pinned && <span class="pin">고정</span>}
+							{note.data.title}
+						</a>
+						<time class="date num" datetime={note.data.date.toISOString()}>
+							{formatDate(note.data.date)}
+						</time>
+					</div>
+					{!compact && <p class="desc">{note.data.description}</p>}
+					{!compact && (
+						<p class="meta">
+							<a href={withBase(`/categories/${slugify(note.data.category)}/`)}>{note.data.category}</a>
+							{note.data.tags.map((tag) => (
+								<a class="tag" href={withBase(`/tags/${slugify(tag)}/`)}>
+									#{tag}
+								</a>
+							))}
+						</p>
+					)}
+				</li>
+			))}
+		</ul>
+	)
+}
+
+<style>
+	.notes {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.notes > li {
+		padding-block: 20px;
+		border-top: 1px solid var(--line);
+	}
+
+	.notes > li:first-child {
+		border-top: 0;
+		padding-top: 4px;
+	}
+
+	.compact > li {
+		padding-block: 10px;
+	}
+
+	.head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.title {
+		font-size: var(--fs-h3);
+		font-weight: 600;
+		color: var(--text);
+		text-decoration: none;
+		line-height: 1.45;
+	}
+
+	.compact .title {
+		font-size: var(--fs-body);
+		font-weight: 500;
+	}
+
+	.title:hover {
+		color: var(--accent);
+	}
+
+	.pin {
+		display: inline-block;
+		margin-right: 8px;
+		padding: 0 8px;
+		border-radius: var(--r-chip);
+		background: var(--accent-bg);
+		color: var(--accent);
+		font-size: var(--fs-meta);
+		font-weight: 600;
+		vertical-align: 3px;
+	}
+
+	.date {
+		flex: none;
+		color: var(--muted);
+		font-size: var(--fs-meta);
+	}
+
+	.desc {
+		margin: 6px 0 0;
+		color: var(--muted);
+		font-size: var(--fs-sm);
+		line-height: 1.7;
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px 12px;
+		margin: 10px 0 0;
+		font-size: var(--fs-meta);
+	}
+
+	.meta a {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.meta a.tag {
+		color: var(--muted);
+	}
+
+	.meta a:hover {
+		text-decoration: underline;
+	}
+
+	.empty {
+		color: var(--muted);
+	}
+</style>

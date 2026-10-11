@@ -1,0 +1,29 @@
+---
+import NoteList from '../../components/NoteList.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadNotes, type NoteEntry } from '../../lib/content';
+import { byCategory, groupByCategory, sortForList } from '../../lib/notes';
+
+export async function getStaticPaths() {
+	const notes = await loadNotes();
+	return groupByCategory(notes).map((item) => ({
+		params: { slug: item.slug },
+		props: { name: item.name, notes: sortForList(byCategory(notes, item.slug)) },
+	}));
+}
+
+interface Props {
+	name: string;
+	notes: NoteEntry[];
+}
+
+const { name, notes } = Astro.props;
+---
+
+<BaseLayout title={`분류: ${name}`}>
+	<div class="container">
+		<PageHeading title={name} lead={`분류, 노트 ${notes.length}편`} />
+		<NoteList notes={notes} />
+	</div>
+</BaseLayout>

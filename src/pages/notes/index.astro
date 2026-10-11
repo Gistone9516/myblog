@@ -1,0 +1,31 @@
+---
+import NoteList from '../../components/NoteList.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadNotes } from '../../lib/content';
+import { sortForList } from '../../lib/notes';
+import { withBase } from '../../utils/withBase';
+
+const notes = sortForList(await loadNotes());
+---
+
+<BaseLayout title="노트">
+	<div class="container">
+		<PageHeading title="노트" lead={`전체 ${notes.length}편`}>
+			<p class="browse">
+				<a href={withBase('/categories/')}>분류별로 보기</a>
+				<a href={withBase('/tags/')}>태그별로 보기</a>
+			</p>
+		</PageHeading>
+		<NoteList notes={notes} />
+	</div>
+</BaseLayout>
+
+<style>
+	.browse {
+		display: flex;
+		gap: 16px;
+		margin: 12px 0 0;
+		font-size: var(--fs-sm);
+	}
+</style>

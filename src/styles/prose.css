@@ -1,0 +1,131 @@
+/* 노트 본문 스타일. 개조식 목록과 코드가 많은 공부 노트에 맞춘다 */
+.prose {
+	max-width: var(--measure);
+}
+
+.prose > * + * {
+	margin-top: 1.1em;
+}
+
+.prose h2 {
+	font-size: var(--fs-h2);
+	margin: 2.2em 0 0.6em;
+	scroll-margin-top: 24px;
+}
+
+.prose h3 {
+	font-size: var(--fs-h3);
+	margin: 1.8em 0 0.5em;
+	scroll-margin-top: 24px;
+}
+
+.prose p {
+	margin: 0;
+}
+
+.prose ul,
+.prose ol {
+	margin: 0;
+	padding-left: 1.3em;
+}
+
+.prose li + li {
+	margin-top: 0.25em;
+}
+
+/* 개조식의 하위 항목은 근거나 예라서 한 단계 작고 흐리게 둔다 */
+.prose li > ul,
+.prose li > ol {
+	margin-top: 0.25em;
+	color: var(--muted);
+}
+
+.prose li::marker {
+	color: var(--muted);
+}
+
+.prose blockquote {
+	margin: 0;
+	padding: 2px 0 2px 16px;
+	border-left: 2px solid var(--line);
+	color: var(--muted);
+}
+
+.prose hr {
+	border: 0;
+	border-top: 1px solid var(--line);
+	margin: 2.4em 0;
+}
+
+.prose table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--fs-sm);
+	display: block;
+	overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--line);
+	text-align: left;
+	vertical-align: top;
+}
+
+.prose th {
+	font-weight: 600;
+}
+
+.prose a {
+	overflow-wrap: anywhere;
+}
+
+/* 알림 상자 (B-12). 종류별 색은 토큰에서만 가져온다 */
+.markdown-alert {
+	--alert: var(--accent);
+	padding: 14px 18px;
+	border-radius: var(--r-box);
+	border: 1px solid color-mix(in srgb, var(--alert) 28%, var(--line));
+	background: color-mix(in srgb, var(--alert) 9%, var(--surface));
+}
+
+.markdown-alert > * + * {
+	margin-top: 0.5em;
+}
+
+.markdown-alert-tip {
+	--alert: var(--s3);
+}
+
+.markdown-alert-important {
+	--alert: var(--s2);
+}
+
+.markdown-alert-warning {
+	--alert: var(--s4);
+}
+
+.markdown-alert-caution {
+	--alert: var(--s5);
+}
+
+.markdown-alert .markdown-alert-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: var(--fs-sm);
+	font-weight: 600;
+	color: color-mix(in srgb, var(--alert) 80%, var(--text));
+}
+
+.markdown-alert .markdown-alert-title svg {
+	fill: currentColor;
+	flex: none;
+}
+
+/* 코드 블록 (B-11). 나머지 모양은 Expressive Code 설정이 맡는다 */
+.prose .expressive-code {
+	margin-top: 1.4em;
+}

@@ -1,0 +1,16 @@
+---
+import ChipList from '../../components/ChipList.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadNotes } from '../../lib/content';
+import { collectTags } from '../../lib/notes';
+
+const tags = collectTags(await loadNotes());
+---
+
+<BaseLayout title="태그">
+	<div class="container">
+		<PageHeading title="태그" lead={`태그 ${tags.length}개`} />
+		<ChipList items={tags} kind="tags" />
+	</div>
+</BaseLayout>

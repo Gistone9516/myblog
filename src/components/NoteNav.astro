@@ -1,0 +1,78 @@
+---
+// 같은 연재의 이전 노트와 다음 노트 (B-5)
+import type { Note } from '../lib/notes';
+import { withBase } from '../utils/withBase';
+
+interface Props {
+	prev?: Note;
+	next?: Note;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+	(prev || next) && (
+		<nav class="note-nav" aria-label="연재의 다른 노트">
+			{prev ? (
+				<a class="card" href={withBase(`/notes/${prev.id}/`)}>
+					<span class="dir">이전 노트</span>
+					<span class="title">{prev.data.title}</span>
+				</a>
+			) : (
+				<span />
+			)}
+			{next && (
+				<a class="card next" href={withBase(`/notes/${next.id}/`)}>
+					<span class="dir">다음 노트</span>
+					<span class="title">{next.data.title}</span>
+				</a>
+			)}
+		</nav>
+	)
+}
+
+<style>
+	.note-nav {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		margin-top: 56px;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 14px 18px;
+		border: 1px solid var(--line);
+		border-radius: var(--r-card);
+		background: var(--surface);
+		color: var(--text);
+		text-decoration: none;
+	}
+
+	.card:hover {
+		border-color: var(--accent);
+	}
+
+	.next {
+		text-align: right;
+	}
+
+	.dir {
+		font-size: var(--fs-meta);
+		color: var(--muted);
+	}
+
+	.title {
+		font-weight: 600;
+		line-height: 1.45;
+	}
+
+	@media (max-width: 560px) {
+		.note-nav {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

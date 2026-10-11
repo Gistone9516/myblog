@@ -1,0 +1,62 @@
+---
+// 분류와 태그 칩. 도메인의 CountItem을 그대로 받는다 (B-8)
+import type { CountItem } from '../lib/notes';
+import { withBase } from '../utils/withBase';
+
+interface Props {
+	items: CountItem[];
+	kind: 'categories' | 'tags';
+	showCount?: boolean;
+}
+
+const { items, kind, showCount = true } = Astro.props;
+const prefix = kind === 'tags' ? '#' : '';
+---
+
+<ul class="chips">
+	{
+		items.map((item) => (
+			<li>
+				<a href={withBase(`/${kind}/${item.slug}/`)}>
+					{prefix}
+					{item.name}
+					{showCount && <span class="count num">{item.count}</span>}
+				</a>
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	a {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 4px 12px;
+		border-radius: var(--r-chip);
+		border: 1px solid var(--line);
+		background: var(--surface);
+		color: var(--text);
+		font-size: var(--fs-sm);
+		text-decoration: none;
+	}
+
+	a:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	.count {
+		color: var(--muted);
+		font-size: var(--fs-meta);
+	}
+</style>

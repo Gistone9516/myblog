@@ -1,0 +1,142 @@
+---
+import { SITE } from '../site.config';
+import { stripBase, withBase } from '../utils/withBase';
+import ThemeToggle from './ThemeToggle.astro';
+
+// 메뉴 이름은 노트, 연재, 아카이브, 소개 (설계서 4장)
+const NAV = [
+	{ href: '/notes/', label: '노트', match: ['/notes/', '/categories/', '/tags/'] },
+	{ href: '/series/', label: '연재', match: ['/series/'] },
+	{ href: '/archive/', label: '아카이브', match: ['/archive/'] },
+	{ href: '/about/', label: '소개', match: ['/about/'] },
+];
+
+const path = stripBase(Astro.url.pathname);
+const isCurrent = (match: string[]) => match.some((prefix) => path.startsWith(prefix));
+---
+
+<header class="site-header">
+	<div class="bar">
+		<a class="brand" href={withBase('/')}>{SITE.title}</a>
+		<nav aria-label="주 메뉴">
+			<ul>
+				{
+					NAV.map((item) => (
+						<li>
+							<a href={withBase(item.href)} aria-current={isCurrent(item.match) ? 'page' : undefined}>
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+		<div class="tools">
+			<a class="icon-button" href={withBase('/search/')} aria-label="검색" title="검색">
+				<svg viewBox="0 0 24 24" aria-hidden="true">
+					<circle cx="11" cy="11" r="6.5"></circle>
+					<path d="M16 16l4.5 4.5"></path>
+				</svg>
+			</a>
+			<ThemeToggle />
+		</div>
+	</div>
+</header>
+
+<style>
+	.site-header {
+		border-bottom: 1px solid var(--line);
+	}
+
+	.bar {
+		width: min(100% - var(--gutter) * 2, 1080px);
+		margin-inline: auto;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 8px 24px;
+		min-height: 64px;
+	}
+
+	.brand {
+		font-weight: 700;
+		font-size: var(--fs-body);
+		color: var(--text);
+		text-decoration: none;
+		letter-spacing: -0.01em;
+	}
+
+	nav ul {
+		display: flex;
+		gap: 4px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		justify-content: flex-end;
+	}
+
+	nav a {
+		display: block;
+		padding: 6px 10px;
+		border-radius: var(--r-chip);
+		font-size: var(--fs-sm);
+		color: var(--muted);
+		text-decoration: none;
+	}
+
+	nav a:hover {
+		color: var(--text);
+	}
+
+	nav a[aria-current='page'] {
+		color: var(--text);
+		background: var(--accent-bg);
+	}
+
+	.tools {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+	}
+
+	.icon-button {
+		display: inline-grid;
+		place-items: center;
+		width: 36px;
+		height: 36px;
+		border-radius: var(--r-chip);
+		color: var(--muted);
+	}
+
+	.icon-button:hover {
+		color: var(--text);
+		background: var(--accent-bg);
+	}
+
+	.icon-button svg {
+		width: 19px;
+		height: 19px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.7;
+		stroke-linecap: round;
+	}
+
+	/* 좁은 화면에서는 메뉴를 둘째 줄로 내린다 */
+	@media (max-width: 560px) {
+		.bar {
+			grid-template-columns: 1fr auto;
+			padding-block: 8px;
+		}
+
+		nav {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+
+		nav ul {
+			justify-content: flex-start;
+			margin-left: -10px;
+		}
+	}
+</style>

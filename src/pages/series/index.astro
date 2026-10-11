@@ -1,0 +1,22 @@
+---
+import PageHeading from '../../components/PageHeading.astro';
+import SeriesShelf from '../../components/SeriesShelf.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadNotes } from '../../lib/content';
+import { groupBySeries } from '../../lib/notes';
+
+const groups = groupBySeries(await loadNotes());
+---
+
+<BaseLayout title="연재">
+	<div class="container">
+		<PageHeading title="연재" lead="같은 주제의 노트를 처음부터 읽는 순서로 묶었습니다." />
+		{groups.length > 0 ? <SeriesShelf groups={groups} /> : <p class="empty">아직 연재가 없습니다.</p>}
+	</div>
+</BaseLayout>
+
+<style>
+	.empty {
+		color: var(--muted);
+	}
+</style>

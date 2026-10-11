@@ -1,0 +1,36 @@
+---
+import NoteList from '../components/NoteList.astro';
+import PageHeading from '../components/PageHeading.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadNotes } from '../lib/content';
+import { groupByYearMonth } from '../lib/notes';
+
+const groups = groupByYearMonth(await loadNotes());
+---
+
+<BaseLayout title="아카이브">
+	<div class="container">
+		<PageHeading title="아카이브" lead="쓴 날짜 순서로 모았습니다." />
+		{
+			groups.map((group) => (
+				<section>
+					<h2 class="num">
+						{group.year}년 {group.month}월
+					</h2>
+					<NoteList notes={group.notes} compact />
+				</section>
+			))
+		}
+	</div>
+</BaseLayout>
+
+<style>
+	section + section {
+		margin-top: 40px;
+	}
+
+	h2 {
+		margin: 0 0 8px;
+		font-size: var(--fs-h3);
+	}
+</style>

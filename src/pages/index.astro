@@ -1,59 +1,160 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+// 대표 화면 (설계서 5장)
+import ChipList from '../components/ChipList.astro';
+import NoteList from '../components/NoteList.astro';
+import SeriesShelf from '../components/SeriesShelf.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadNotes } from '../lib/content';
+import { groupByCategory, groupBySeries, siteStats, sortForList } from '../lib/notes';
+import { SITE } from '../site.config';
+import { withBase } from '../utils/withBase';
+
+const RECENT_COUNT = 8;
+const SHELF_COUNT = 4;
+
+const notes = await loadNotes();
+const recent = sortForList(notes).slice(0, RECENT_COUNT);
+const series = groupBySeries(notes);
+const categories = groupByCategory(notes);
+const stats = siteStats(notes);
+const { profile } = SITE;
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to
-				build a personal website, blog, or portfolio with Astro.
+<BaseLayout>
+	<div class="container home">
+		<section class="intro">
+			<!-- B-7 프로필이 비어 있으면 사이트 이름과 사이트 소개를 쓴다 -->
+			<h1>{profile.name || SITE.title}</h1>
+			<p class="lead">{profile.oneLiner || SITE.description}</p>
+			{
+				profile.focus.length > 0 && (
+					<p class="focus">
+						<span class="focus-label">지금 공부 중</span>
+						{profile.focus.map((item) => (
+							<span class="badge">{item}</span>
+						))}
+					</p>
+				)
+			}
+			{profile.intro && <p class="bio">{profile.intro}</p>}
+			<!-- B-6 지표는 문장 한 줄로, 숫자만 굵게 -->
+			<p class="stats">
+				노트 <strong class="num">{stats.notes}</strong>편, 연재 <strong class="num">{stats.series}</strong>개,{' '}
+				<strong class="num">{stats.days}</strong>일 기록
 			</p>
-			<p>
-				This template comes with a few integrations already configured in your{' '}
-				<code>astro.config.mjs</code> file. You can customize your setup with{' '}
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like
-				Tailwind, React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>
-					Edit this page in <code>src/pages/index.astro</code>
-				</li>
-				<li>
-					Edit the site header items in <code>src/components/Header.astro</code>
-				</li>
-				<li>
-					Add your name to the footer in <code>src/components/Footer.astro</code>
-				</li>
-				<li>
-					Check out the included blog posts in <code>src/content/blog/</code>
-				</li>
-				<li>
-					Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code>
-				</li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to{' '}
-				<a href="https://docs.astro.build/">read the docs</a> or{' '}
-				<a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out{' '}
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a> by{' '}
-				<a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+		</section>
+
+		{
+			series.length > 0 && (
+				<section>
+					<div class="section-head">
+						<h2>연재</h2>
+						<a href={withBase('/series/')}>전체 보기</a>
+					</div>
+					<SeriesShelf groups={series.slice(0, SHELF_COUNT)} />
+				</section>
+			)
+		}
+
+		<section>
+			<div class="section-head">
+				<h2>최근 노트</h2>
+				<a href={withBase('/notes/')}>전체 보기</a>
+			</div>
+			<NoteList notes={recent} />
+		</section>
+
+		{
+			categories.length > 0 && (
+				<section>
+					<div class="section-head">
+						<h2>분류</h2>
+					</div>
+					<ChipList items={categories} kind="categories" />
+				</section>
+			)
+		}
+	</div>
+</BaseLayout>
+
+<style>
+	.intro {
+		margin: 72px 0 8px;
+	}
+
+	h1 {
+		margin: 0;
+		font-size: var(--fs-title);
+		letter-spacing: -0.02em;
+	}
+
+	.lead {
+		margin: 12px 0 0;
+		font-size: var(--fs-body);
+		color: var(--muted);
+	}
+
+	.focus {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		margin: 20px 0 0;
+		font-size: var(--fs-sm);
+	}
+
+	.focus-label {
+		color: var(--muted);
+		margin-right: 4px;
+	}
+
+	.badge {
+		padding: 2px 10px;
+		border-radius: var(--r-chip);
+		background: var(--accent-bg);
+		color: var(--accent);
+	}
+
+	.bio {
+		margin: 20px 0 0;
+		max-width: var(--measure);
+	}
+
+	.stats {
+		margin: 24px 0 0;
+		font-size: var(--fs-sm);
+		color: var(--muted);
+	}
+
+	.stats strong {
+		color: var(--text);
+		font-weight: 600;
+	}
+
+	section + section {
+		margin-top: 56px;
+	}
+
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
+
+	h2 {
+		margin: 0;
+		font-size: var(--fs-h2);
+	}
+
+	.section-head a {
+		font-size: var(--fs-sm);
+		color: var(--muted);
+		text-decoration: none;
+	}
+
+	.section-head a:hover {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+</style>

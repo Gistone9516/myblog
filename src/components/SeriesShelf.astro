@@ -1,0 +1,101 @@
+---
+// 연재 카드 (설계서 5장). 대표 화면에서 유일하게 힘을 주는 곳이다
+// 왼쪽 책등 면은 연재 색(B-16), 오른쪽에 노트 수만큼 겹친 페이지(최대 4장)
+import type { SeriesGroup } from '../lib/notes';
+import { formatDate } from '../utils/format';
+import { seriesColorVar } from '../utils/series';
+import { withBase } from '../utils/withBase';
+
+interface Props {
+	groups: SeriesGroup[];
+}
+
+const MAX_PAGES = 4;
+const { groups } = Astro.props;
+
+// 겹친 페이지는 표면색 한 겹과 선 한 겹을 번갈아 쌓은 그림자로 만든다
+function pageStack(count: number): string {
+	const extra = Math.min(count, MAX_PAGES) - 1;
+	const layers: string[] = [];
+	for (let i = 1; i <= extra; i++) {
+		const offset = i * 4;
+		layers.push(`${offset}px 0 0 -1px var(--surface)`, `${offset}px 0 0 0 var(--line)`);
+	}
+	return layers.length ? layers.join(', ') : 'none';
+}
+---
+
+<ul class="shelf">
+	{
+		groups.map((group) => {
+			const color = seriesColorVar(group.name);
+			return (
+				<li>
+					<a
+						class="book"
+						href={withBase(`/series/${group.slug}/`)}
+						style={`--spine-color: ${color}; box-shadow: ${pageStack(group.notes.length)};`}
+					>
+						<span class="name">{group.name}</span>
+						<span class="info">
+							<span class="num">{group.notes.length}</span>편, 최근{' '}
+							<time class="num" datetime={group.latest.toISOString()}>
+								{formatDate(group.latest)}
+							</time>
+						</span>
+					</a>
+				</li>
+			);
+		})
+	}
+</ul>
+
+<style>
+	.shelf {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+		gap: 20px 28px;
+		margin: 0;
+		padding: 0 16px 0 0;
+		list-style: none;
+	}
+
+	.book {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		min-height: 128px;
+		padding: 16px 18px 16px calc(var(--spine) + 16px);
+		border: 1px solid var(--line);
+		border-radius: var(--r-card);
+		background: var(--surface);
+		color: var(--text);
+		text-decoration: none;
+		overflow: hidden;
+	}
+
+	/* 책등 면. 카드의 둥근 모서리를 따라 잘린다 */
+	.book::before {
+		content: '';
+		position: absolute;
+		inset: 0 auto 0 0;
+		width: var(--spine);
+		background: var(--spine-color);
+	}
+
+	.book:hover {
+		border-color: color-mix(in srgb, var(--spine-color) 55%, var(--line));
+	}
+
+	.name {
+		font-size: var(--fs-h3);
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	.info {
+		color: var(--muted);
+		font-size: var(--fs-meta);
+	}
+</style>

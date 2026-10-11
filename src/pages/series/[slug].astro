@@ -1,0 +1,25 @@
+---
+import NoteList from '../../components/NoteList.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadNotes, type NoteEntry } from '../../lib/content';
+import { groupBySeries, type SeriesGroup } from '../../lib/notes';
+
+export async function getStaticPaths() {
+	const groups = groupBySeries(await loadNotes());
+	return groups.map((group) => ({ params: { slug: group.slug }, props: { group } }));
+}
+
+interface Props {
+	group: SeriesGroup<NoteEntry>;
+}
+
+const { group } = Astro.props;
+---
+
+<BaseLayout title={`연재: ${group.name}`}>
+	<div class="container">
+		<PageHeading title={group.name} lead={`연재 ${group.notes.length}편, 처음부터 읽는 순서`} />
+		<NoteList notes={group.notes} />
+	</div>
+</BaseLayout>
