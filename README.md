@@ -15,14 +15,16 @@
 
 ## 구조
 
-```mermaid
-flowchart LR
-    MD[노트 마크다운] --> Adapter[content.ts 어댑터]
-    Adapter --> Domain[notes.ts 도메인 함수]
-    Domain --> UI[components / pages]
-    UI --> Dist[정적 HTML]
-    Dist --> Pagefind[Pagefind 검색 색인]
-    Dist --> Pages[GitHub Pages]
+```
+src/content/notes/*.md       노트 마크다운
+        │
+src/lib/content.ts           어댑터. 콘텐츠를 읽는 유일한 곳
+        │
+src/lib/notes.ts             도메인 함수. Astro를 모르는 순수 함수
+        │
+src/components, src/pages    화면. 도메인 함수의 결과만 그린다
+        │
+dist/                        정적 HTML과 Pagefind 검색 색인, GitHub Pages에 게시
 ```
 
 콘텐츠를 읽는 곳은 어댑터 하나뿐이고, 정렬, 초안 제외, 연재 묶기 같은 규칙은 Astro를 모르는 순수 함수에 모았습니다. 화면마다 콘텐츠를 직접 읽으면 초안 제외나 정렬이 어딘가에서 빠지기 때문입니다. 도메인 함수는 Astro 없이 단위 테스트합니다.
